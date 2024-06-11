@@ -90,7 +90,7 @@ Given that `POPULATE` works like `CREATE TABLE ... AS SELECT ...` it has limitat
 - It is not supported with Replicated database
 - It is not supported in ClickHouse cloud
 
-Instead a separate `INSERT ... SELECT` can be used.  
+Instead a separate `INSERT ... SELECT` can be used.
 :::
 
 A `SELECT` query can contain `DISTINCT`, `GROUP BY`, `ORDER BY`, `LIMIT`. Note that the corresponding conversions are performed independently on each block of inserted data. For example, if `GROUP BY` is set, data is aggregated during insertion, but only within a single packet of inserted data. The data won’t be further aggregated. The exception is when using an `ENGINE` that independently performs data aggregation, such as `SummingMergeTree`.
@@ -192,6 +192,10 @@ REFRESH EVERY 2 WEEK OFFSET 5 DAY 15 HOUR 10 MINUTE -- every other Saturday, at 
 REFRESH EVERY 30 MINUTE -- at 00:00, 00:30, 01:00, 01:30, etc
 REFRESH AFTER 30 MINUTE -- 30 minutes after the previous refresh completes, no alignment with time of day
 -- REFRESH AFTER 1 HOUR OFFSET 1 MINUTE -- syntax errror, OFFSET is not allowed with AFTER
+REFRESH EVERY 1 WEEK 2 DAYS -- every 9 days, not on any particular day of the week or month;
+                            -- specifically, when day number (since 1969-12-29) is divisible by 9
+REFRESH EVERY 5 MONTHS -- every 5 months, different months each year (as 12 is not divisible by 5);
+                       -- specifically, when month number (since 1970-01) is divisible by 5
 ```
 
 `RANDOMIZE FOR` randomly adjusts the time of each refresh, e.g.:
